@@ -12,6 +12,11 @@ class WindowMenu(wx.Menu):
         self.frame.Unbind(wx.EVT_CLOSE, handler=self.on_close_window)
         self.frame.Unbind(wx.EVT_ACTIVATE, handler=self.on_activate_window)
         self.frame._wx_mac_window_menu__frame_closing = True
+        other_active_window = [w for w in wx.GetTopLevelWindows() if not w == self.frame and w.IsActive()]
+        if not self.frame.IsActive() and len(other_active_window) > 0:
+            self.frame.Raise()
+            for w in other_active_window:
+                wx.CallAfter(lambda: w.Raise())
         evt.Skip()
 
     def on_activate_window(self, evt):
