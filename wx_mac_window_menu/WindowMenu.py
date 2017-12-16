@@ -16,16 +16,19 @@ class WindowMenu(wx.Menu):
 
     def on_activate_window(self, evt):
         self.clear()
+        self.rebuild_menu_items(evt.GetId(), evt.Active)
+        evt.Skip()
+
+    def rebuild_menu_items(self, window_id, active):
         open_windows = [w for w in wx.GetTopLevelWindows() if not (hasattr(w, '_wx_mac_window_menu__frame_closing'))]
         for i, w in enumerate(open_windows):
             shortcut = "\tCTRL+{0}".format(i+1) if i < 9 else ''
             item = self.AppendRadioItem(w.Id, w.Title + shortcut)
-            self.Check(item.Id, evt.GetId() == w.Id and evt.Active)
-        if evt.Active:
+            self.Check(item.Id, window_id == w.Id and active)
+        if active:
             self.Bind(wx.EVT_MENU, self.on_selected)
         else:
             self.Unbind(wx.EVT_MENU)
-        evt.Skip()
 
     def on_selected(self, evt=None):
         evt.Skip()
